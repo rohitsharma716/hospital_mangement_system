@@ -3,7 +3,6 @@ package com.rohit.hospitalMangement.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import javax.print.Doc;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,16 +18,19 @@ public class Doctor {
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
 
-        @Column(nullable = false,length = 50)
+        @Column(nullable = false, length = 50)
         private String name;
 
         @Column(length = 100)
         private String specilization;
 
-        @Column(nullable = true,length = 100,unique = true)
+        @Column(nullable = true, length = 100, unique = true)
         private String email;
 
         @ManyToMany(mappedBy = "doctors")
-        private Set<Department>  departments = new HashSet<>();
+        private Set<Department> departments = new HashSet<>();
+
+        @OneToMany(mappedBy = "doctor")
+        private Set<Appointment> appointments = new HashSet<>();
 
 }
