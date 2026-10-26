@@ -25,3 +25,11 @@ VALUES
     ('Dr. Rahul Singh', 'Orthopedics', 'rahul.singh@example.com'),
     ('Dr. Neha Gupta', 'Dermatology', 'neha.gupta@example.com'),
     ('Dr. Vikram Patel', 'Pediatrics', 'vikram.patel@example.com');
+
+
+INSERT INTO users (username, password, role)
+VALUES 
+    ('admin', '$2b$12$AjlpAMzfQrDl.HClrkWQkeFlCoUXzZul0PNpQnd9QVqDfQ13F/f5G', 'ADMIN'),
+    ('doctor', '$2b$12$r/jOirGxBQQDEJOPyT78tuAPLqxut82Ec4ixLICvjyzz6TjAw3v4e', 'DOCTOR'),
+    ('patient', '$2b$12$FmjhYp0I0wWOTZCe2Ft/F.edNaTvA/09tbXnQNMF.HNqp4HmFpiA6', 'PATIENT')
+ON CONFLICT (username) DO NOTHING;
