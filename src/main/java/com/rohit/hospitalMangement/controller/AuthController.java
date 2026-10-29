@@ -2,8 +2,11 @@ package com.rohit.hospitalMangement.controller;
 
 import com.rohit.hospitalMangement.DTO.LoginRequest;
 import com.rohit.hospitalMangement.DTO.LoginResponse;
+import com.rohit.hospitalMangement.DTO.SignUpRequest;
+import com.rohit.hospitalMangement.DTO.SignUpResponse;
 import com.rohit.hospitalMangement.security.AuthService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,13 +20,13 @@ public class AuthController {
 
     private final AuthService authService;
 
-
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
-    return ResponseEntity.ok(authService.login(loginRequest));
-}
+        return ResponseEntity.ok(authService.login(loginRequest));
+    }
 
-    
-
-
+    @PostMapping({"/signup", "/register"})
+    public ResponseEntity<SignUpResponse> signup(@RequestBody SignUpRequest signUpRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(authService.signup(signUpRequest));
+    }
 }
