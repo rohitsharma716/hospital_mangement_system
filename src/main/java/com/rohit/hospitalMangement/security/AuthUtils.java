@@ -1,5 +1,8 @@
 package com.rohit.hospitalMangement.security;
 
+import com.rohit.hospitalMangement.Entity.type.ProviderType;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -21,6 +24,7 @@ import javax.crypto.SecretKey;
 
 
 @Component
+@Slf4j
 public class AuthUtils {
     
     @Value("${jwt.secret}")
@@ -77,6 +81,53 @@ public class AuthUtils {
     .parseSignedClaims(token)
     .getPayload();
      }
+
+     public ProviderType getProviderTypeFromProviderId(String registrationId) {
+         ProviderType providerType = switch (registrationId.toLowerCase()) {
+             case "google" -> ProviderType.GOOGLE;
+             case "github" -> ProviderType.GITHUB;
+             case "facebook" -> ProviderType.FACEBOOK;
+             default -> throw new IllegalArgumentException("unsupported OAuth2 provider: " + registrationId);
+         };
+         return providerType;
+
+     }
+
+     public String determineProviderIdFromOAuthUser(OAuth2User oAuth2User, String registrationId){
+           String providerId = switch(registrationId.toLowerCase()){
+                 case "google" -> oAuth2User.getAttribute("sub");
+                 // GitHub returns "id" as an Integer.
+                 // Cast to Object explicitly to force String.valueOf(Object) overload —
+                 // without it the compiler picks String.valueOf(char[]) causing ClassCastException.
+                 case "github" -> String.valueOf((Object) oAuth2User.getAttribute("id"));
+                 default ->  {
+                     log.error("unable to detemine the providerId : " +  registrationId);
+                     throw new IllegalArgumentException("unable to determine the providerid from registrationId");
+                 }
+
+           };
+           if(providerId == null || providerId.isBlank() || providerId.equals("null")){
+               log.error("unable to detemine the provider for provider id " +  registrationId);
+               throw new IllegalArgumentException("unable to determine the provider id from registeer id " + registrationId);
+
+
+           }
+           return providerId;
+     }
+     public String determineUserNameFromOAuth2User(OAuth2User oAuth2User, String registrationId , String providerId){
+
+        String email = oAuth2User.getAttribute("email");
+        if(email != null && !email.isBlank()){
+              return email;
+        }
+        return switch (registrationId.toLowerCase()){
+             case "google" -> oAuth2User.getAttribute("sub");
+             case "github" -> oAuth2User.getAttribute("login");
+             default ->  providerId;
+        };
+     }
+
+
         
 
 }

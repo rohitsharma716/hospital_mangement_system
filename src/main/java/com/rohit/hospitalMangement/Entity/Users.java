@@ -1,6 +1,7 @@
 package com.rohit.hospitalMangement.Entity;
 
 
+import com.rohit.hospitalMangement.Entity.type.ProviderType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,11 +30,19 @@ public class Users implements UserDetails {
     @Column(unique = true,nullable=false)
     private String username;
 
-    @Column(nullable=false  )
+    @Column(nullable=true)
     private String password;
+
 
     @Column(nullable = false)
     private String role;
+
+    @Column(name = "provider_id")
+    private String providerId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "provider_type")
+    private ProviderType providerType;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
